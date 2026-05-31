@@ -20,7 +20,12 @@ class Product(models.Model):
 
 class Review(models.Model):
     text = models.TextField()
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    stars = models.IntegerField()
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
 
     def __str__(self):
         return self.text[:30]

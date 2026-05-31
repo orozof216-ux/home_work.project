@@ -22,7 +22,6 @@ def category_detail(request, id):
     return Response(serializer.data)
 
 
-
 @api_view(['GET'])
 def product_list(request):
     products = Product.objects.all()
@@ -37,7 +36,6 @@ def product_detail(request, id):
     return Response(serializer.data)
 
 
-
 @api_view(['GET'])
 def review_list(request):
     reviews = Review.objects.all()
@@ -49,4 +47,11 @@ def review_list(request):
 def review_detail(request, id):
     review = Review.objects.get(id=id)
     serializer = ReviewSerializer(review)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def products_reviews(request):
+    products = Product.objects.all()
+    serializer = ProductSerializer(products, many=True)
     return Response(serializer.data)
