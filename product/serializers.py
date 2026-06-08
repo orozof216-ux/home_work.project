@@ -8,6 +8,13 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = '__all__'
 
+    def validate_text(self, value):
+        if len(value.strip()) < 3:
+            raise serializers.ValidationError(
+                "Текст отзыва слишком короткий"
+            )
+        return value
+
 
 class ProductSerializer(serializers.ModelSerializer):
     reviews = ReviewSerializer(many=True, read_only=True)
@@ -20,9 +27,24 @@ class ProductSerializer(serializers.ModelSerializer):
             'title',
             'description',
             'price',
+            'category',
             'reviews',
             'rating',
         ]
+
+    def validate_title(self, value):
+        if len(value.strip()) < 2:
+            raise serializers.ValidationError(
+                "Название слишком короткое"
+            )
+        return value
+
+    def validate_price(self, value):
+        if value <= 0:
+            raise serializers.ValidationError(
+                "Цена должна быть больше 0"
+            )
+        return value
 
     def get_rating(self, obj):
         return obj.reviews.aggregate(
@@ -40,6 +62,13 @@ class CategorySerializer(serializers.ModelSerializer):
             'name',
             'products_count',
         ]
+
+    def validate_name(self, value):
+        if len(value.strip()) < 2:
+            raise serializers.ValidationError(
+                "Название категории слишком короткое"
+            )
+        return value
 
     def get_products_count(self, obj):
         return obj.product_set.count()
