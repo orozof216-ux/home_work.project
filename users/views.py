@@ -5,8 +5,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from .serializers import RegisterSerializer
 from .models import ConfirmationCode
+from .serializers import RegisterSerializer
 
 
 @api_view(['POST'])
@@ -18,13 +18,10 @@ def register(request):
 
         code = str(random.randint(100000, 999999))
 
-        ConfirmationCode.objects.create(
-            user=user,
-            code=code
-        )
+        ConfirmationCode.objects.create(user=user, code=code)
 
         return Response(
-            {"message": "User created. Check confirmation code.", "code": code},
+            {"message": "User created", "code": code},
             status=status.HTTP_201_CREATED
         )
 
@@ -43,7 +40,7 @@ def confirm_user(request):
         if confirm.code == code:
             user.is_active = True
             user.save()
-            return Response({"message": "User confirmed"})
+            return Response({"message": "Confirmed"})
 
         return Response({"message": "Wrong code"})
 
@@ -61,6 +58,6 @@ def login_user(request):
     if user:
         if user.is_active:
             return Response({"message": "Login success"})
-        return Response({"message": "User not confirmed"})
+        return Response({"message": "Not confirmed"})
 
     return Response({"message": "Invalid credentials"})
